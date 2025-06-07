@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-// UI 상태를 정의하는 열거형
+// UI 상태를 정의하는 열거형 (FSM 방식)
 public enum UIState
 {
     MainMenu,     // 메인 메뉴 상태
@@ -8,61 +8,78 @@ public enum UIState
     Inventory     // 인벤토리 UI 상태
 }
 
-// UI 전환을 담당하는 싱글톤 매니저 클래스
+// UI 전환과 UI 접근을 담당하는 싱글톤 매니저 클래스
 public class UIManager : MonoBehaviour
 {
-    // 전역 접근이 가능한 UIManager 싱글톤 인스턴스
+    // 싱글톤 인스턴스
     public static UIManager Instance { get; private set; }
 
-    // 각각의 UI GameObject들을 인스펙터에서 연결
-    [SerializeField] private GameObject uiMainMenu;   // 항상 보이는 메인 메뉴 UI
-    [SerializeField] private GameObject uiStatus;     // 상태창 UI (조건부 표시)
-    [SerializeField] private GameObject uiInventory;  // 인벤토리 UI (조건부 표시)
+    // 각각의 UI 오브젝트를 인스펙터에서 연결
+    [SerializeField] private GameObject uiMainMenu;   // 메인 메뉴 UI 오브젝트
+    [SerializeField] private GameObject uiStatus;     // 상태창 UI 오브젝트
+    [SerializeField] private GameObject uiInventory;  // 인벤토리 UI 오브젝트
 
-    // 현재 UI 상태를 저장하는 변수
+    // 현재 UI 상태 (메인, 상태창, 인벤토리)
     private UIState currentState;
+
+    // 각 UI의 스크립트 컴포넌트를 캐싱
+    private UIMainMenu uiMainMenuScript;
+    private UIStatus uiStatusScript;
+    private UIInventory uiInventoryScript;
+
+    // 외부에서 각 UI 스크립트에 접근할 수 있는 프로퍼티
+    public UIMainMenu UIMainMenu => uiMainMenuScript;
+    public UIStatus UIStatus => uiStatusScript;
+    public UIInventory UIInventory => uiInventoryScript;
 
     private void Awake()
     {
-        // 싱글톤 패턴 설정: 인스턴스가 없으면 this를 사용하고, 중복 생성 방지
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        // 싱글톤 초기화
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+        // 하위 오브젝트에서 컴포넌트 참조 캐싱
+        uiMainMenuScript = uiMainMenu.GetComponent<UIMainMenu>();
+        uiStatusScript = uiStatus.GetComponent<UIStatus>();
+        uiInventoryScript = uiInventory.GetComponent<UIInventory>();
     }
 
     private void Start()
     {
-        // 게임 시작 시 초기 상태를 MainMenuOnly로 설정 (UIStatus/UIInventory 숨김)
+        // 초기화: 메인 메뉴만 보이도록 설정
         ShowMainMenuOnly();
     }
 
-    // UI 상태 변경 메서드 (FSM처럼 동작)
+    // UI 상태 변경 메서드
     public void ChangeState(UIState newState)
     {
-        // 상태를 변경하고 저장
         currentState = newState;
 
-        // MainMenu는 항상 켜짐
+        // 메인 메뉴는 항상 활성화 상태 유지
         uiMainMenu.SetActive(true);
 
-        // 선택된 상태에 따라 추가 UI를 조건부로 보여줌
+        // 상태창과 인벤토리는 선택된 상태에 따라 활성화
         uiStatus.SetActive(newState == UIState.Status);
         uiInventory.SetActive(newState == UIState.Inventory);
     }
 
-    // 상태를 완전히 MainMenu 전용으로 초기화하는 메서드
+    // 서브 UI를 모두 끄고 메인 메뉴만 표시
     public void ShowMainMenuOnly()
     {
         currentState = UIState.MainMenu;
 
-        // 메인 메뉴는 항상 활성화
         uiMainMenu.SetActive(true);
-
-        // 다른 UI는 모두 비활성화
         uiStatus.SetActive(false);
         uiInventory.SetActive(false);
     }
 
-    // 외부에서 현재 UI 상태를 조회할 수 있도록 하는 Getter
+    // 현재 UI 상태 반환
     public UIState GetCurrentState()
     {
         return currentState;

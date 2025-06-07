@@ -11,9 +11,10 @@ public class Character
     public int Defense { get; private set; }         // 방어력
     public int Health { get; private set; }          // 체력
     public int Critical { get; private set; }        // 치명타 확률
+    public int Gold { get; private set; }            // 현재 보유 골드
 
     // 생성자에서 모든 데이터를 초기화
-    public Character(string name, int level, int exp, int maxExp, int attack, int defense, int health, int critical)
+    public Character(string name, int level, int exp, int maxExp, int attack, int defense, int health, int critical, int gold)
     {
         Name = name;
         Level = level;
@@ -23,5 +24,6 @@ public class Character
         Defense = defense;
         Health = health;
         Critical = critical;
+        Gold = gold;
     }
 }
