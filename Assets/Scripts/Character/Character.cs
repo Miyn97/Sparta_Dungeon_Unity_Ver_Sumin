@@ -14,7 +14,11 @@ public class Character
     public int Gold { get; private set; }            // 현재 보유한 골드
 
     public List<Item> Inventory { get; private set; }   // 인벤토리에 있는 아이템 리스트
-    private Item equippedItem;                          // 현재 장착된 아이템
+
+    // 장착된 아이템들 분류별로 관리
+    private Item weaponItem;     // 검, 활, 망치, 마법책
+    private Item shieldItem;     // 방패
+    private List<Item> accessoryItems; // 반지, 투구 등
 
     // 생성자를 통해 모든 플레이어 정보를 초기화
     public Character(string name, int level, int exp, int maxExp, int attack, int defense, int health, int critical, int gold)
@@ -29,7 +33,8 @@ public class Character
         Critical = critical;
         Gold = gold;
 
-        Inventory = new List<Item>();                   // 인벤토리 리스트 초기화
+        Inventory = new List<Item>();             // 인벤토리 리스트 초기화
+        accessoryItems = new List<Item>();        // 장신구 리스트 초기화
     }
 
     // 아이템을 인벤토리에 추가하는 메서드
@@ -38,18 +43,63 @@ public class Character
         Inventory.Add(item);
     }
 
-    // 아이템을 장착하는 메서드
+    // 아이템을 장착하는 메서드 (조건은 EquipUIManager에서 체크)
     public void Equip(Item item)
     {
-        // 인벤토리에 존재하지 않는 아이템은 장착 불가
         if (!Inventory.Contains(item)) return;
 
-        equippedItem = item;                            // 해당 아이템을 장착
+        switch (item.Name)
+        {
+            case "검":
+            case "망치":
+            case "활":
+            case "마법책":
+                weaponItem = item;
+                break;
+            case "방패":
+                shieldItem = item;
+                break;
+            case "반지":
+            case "투구":
+                if (!accessoryItems.Contains(item))
+                    accessoryItems.Add(item);
+                break;
+        }
     }
 
-    // 아이템이 현재 장착된 상태인지 확인하는 메서드
+    // 아이템 장착 해제
+    public void UnEquip(Item item)
+    {
+        if (item == weaponItem)
+            weaponItem = null;
+        else if (item == shieldItem)
+            shieldItem = null;
+        else if (accessoryItems.Contains(item))
+            accessoryItems.Remove(item);
+    }
+
+    // 해당 아이템이 현재 장착 중인지 확인
     public bool IsEquipped(Item item)
     {
-        return equippedItem == item;
+        return item == weaponItem || item == shieldItem || accessoryItems.Contains(item);
     }
+
+    // 무기 장착 여부 확인
+    public bool HasEquippedWeapon()
+    {
+        return weaponItem != null;
+    }
+
+    // 현재 장착 중인 무기 반환
+    public Item GetEquippedWeapon()
+    {
+        return weaponItem;
+    }
+
+    // 현재 장착 중인 방패 반환
+    public Item GetEquippedShield()
+    {
+        return shieldItem;
+    }
+
 }

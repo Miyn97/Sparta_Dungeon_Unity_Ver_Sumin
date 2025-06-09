@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 // 인벤토리 슬롯 하나를 담당하는 클래스
-public class UISlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class UISlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [Header("UI 구성요소")]
     [SerializeField] private Image iconImage;                       // 슬롯에 표시될 아이템 이미지
@@ -12,7 +12,7 @@ public class UISlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [SerializeField] private Sprite noneSprite;                     // 아이템이 없을 때 표시할 None 아이콘
 
     private Item itemData;                                          // 현재 슬롯에 할당된 아이템 정보
-    private TextMeshProUGUI hoverNameText;                          // 마우스 오버 시 이름을 표시할 텍스트
+    private TextMeshProUGUI hoverNameText;                          // 마우스 오버 시 이름을 표시할 텍스트 (지금은 사용하지 않지만 구조 유지)
 
     private void Awake()
     {
@@ -20,52 +20,75 @@ public class UISlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         equipMark.SetActive(false);                                 // 슬롯 생성 시 장착 마크 비활성화
     }
 
-    // 실제 아이템이 있는 경우 슬롯에 정보 세팅
+    // 슬롯에 실제 아이템 정보가 들어왔을 때 설정
     public void SetItem(Item item, bool isEquipped, TextMeshProUGUI hoverText)
     {
-        itemData = item;                                            // 아이템 데이터 저장
+        itemData = item;                                            // 아이템 정보 저장
         iconImage.sprite = item.Icon;                               // 아이콘 이미지 설정
-        iconImage.gameObject.SetActive(true);                       // 아이콘 오브젝트 활성화
-        equipMark.SetActive(isEquipped);                            // 장착 여부에 따라 마크 표시
-        hoverNameText = hoverText;                                  // 마우스 오버용 이름 텍스트 저장
+        iconImage.gameObject.SetActive(true);                       // 아이콘 이미지 보이게 설정
+        equipMark.SetActive(isEquipped);                            // 장착된 상태면 E 마크 활성화
+        hoverNameText = hoverText;                                  // (현재 사용되지 않음, 예전 hover용 텍스트)
     }
 
-    // 아이템이 없는 경우 슬롯에 None 아이콘 표시
+    // 슬롯에 아이템이 없을 경우 None 슬롯으로 초기화
     public void SetNone(TextMeshProUGUI hoverText)
     {
-        itemData = null;                                            // 아이템 없음으로 설정
-        iconImage.sprite = noneSprite;                              // None 아이콘으로 설정
-        iconImage.gameObject.SetActive(true);                       // None 아이콘 오브젝트 활성화
+        itemData = null;                                            // 아이템 비우기
+        iconImage.sprite = noneSprite;                              // None 이미지 설정
+        iconImage.gameObject.SetActive(true);                       // None 아이콘 활성화
         equipMark.SetActive(false);                                 // 장착 마크 비활성화
-        hoverNameText = hoverText;                                  // 마우스 오버용 이름 텍스트 저장
+        hoverNameText = hoverText;                                  // (현재 사용되지 않음)
     }
 
-    // 마우스를 슬롯 위에 올렸을 때 아이템 이름 표시
+    // 슬롯에 마우스 올렸을 때 실행 (현재 사용 안 함)
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (hoverNameText == null) return;
 
-        // 마우스가 이 슬롯 내부 또는 자식 위에 있을 때만 작동
         if (eventData.pointerEnter == null || !eventData.pointerEnter.transform.IsChildOf(transform))
             return;
 
         hoverNameText.text = itemData != null ? itemData.Name : "없음";
     }
 
-
-    // 마우스가 슬롯을 벗어났을 때 텍스트 초기화
+    // 슬롯에서 마우스 벗어날 때 텍스트 초기화
     public void OnPointerExit(PointerEventData eventData)
     {
         if (hoverNameText != null)
-            hoverNameText.text = "";                                // 텍스트 초기화
+            hoverNameText.text = "";
     }
 
-    // 슬롯에 할당된 아이템 정보로 UI 갱신
+    // 슬롯 클릭 시 장착 UI 호출
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (itemData == null) return;
+
+        // 좌클릭일 때만 실행
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            EquipUIManager ui = FindObjectOfType<EquipUIManager>();
+            bool isEquipped = GameManager.Instance.Player.IsEquipped(itemData);
+
+            // 클릭된 슬롯, 아이템, 장착 여부 전달
+            ui.Show(this, itemData, isEquipped);
+        }
+    }
+
+    // 외부에서 호출: E 마크 상태를 갱신함
+    public void RefreshEquipMark()
+    {
+        if (itemData == null) return;
+
+        bool equipped = GameManager.Instance.Player.IsEquipped(itemData);
+        equipMark.SetActive(equipped);
+    }
+
+    // 아이콘 이미지 강제로 갱신 (리프레시용)
     public void RefreshUI()
     {
         if (itemData == null) return;
 
-        iconImage.sprite = itemData.Icon;                           // 아이콘 갱신
-        iconImage.gameObject.SetActive(true);                       // 아이콘이 꺼져 있을 수 있으므로 다시 켜기
+        iconImage.sprite = itemData.Icon;
+        iconImage.gameObject.SetActive(true);
     }
 }

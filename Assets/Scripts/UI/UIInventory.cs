@@ -22,12 +22,22 @@ public class UIInventory : MonoBehaviour
 
     private void Start()
     {
-        // 뒤로가기 버튼에 메인 메뉴 전환 기능 연결
-        backButton.onClick.AddListener(() => UIManager.Instance.ChangeState(UIState.MainMenu));
+        // 뒤로가기 버튼 클릭 시 EquipUI도 함께 닫기
+        backButton.onClick.AddListener(() =>
+        {
+            // 장착 UI가 켜져 있다면 끄기
+            EquipUIManager ui = FindObjectOfType<EquipUIManager>();
+            if (ui != null)
+                ui.Hide();
 
-        // 인벤토리 UI 초기화 실행
+            // 메인 메뉴로 전환
+            UIManager.Instance.ChangeState(UIState.MainMenu);
+        });
+
+        // 인벤토리 초기화
         InitInventoryUI();
     }
+
 
     public void InitInventoryUI()
     {
