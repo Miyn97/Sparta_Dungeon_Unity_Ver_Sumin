@@ -5,12 +5,17 @@ using UnityEngine.UI;
 // 메인 메뉴 UI에서 캐릭터 정보 출력 및 버튼 기능 담당 클래스
 public class UIMainMenu : MonoBehaviour
 {
+    [Header("텍스트")]
     [SerializeField] private TextMeshProUGUI nameText;         // 캐릭터 이름 표시 텍스트
-    [SerializeField] private TextMeshProUGUI levelValueText;   // 하단의 경험치 수치 텍스트 (슬라이더 옆)
-    [SerializeField] private TextMeshProUGUI expText;          // 슬라이더 위에 표시되는 경험치 텍스트 (중앙)
-    [SerializeField] private TextMeshProUGUI descriptionText;  // 레벨 텍스트 (Lv.표시)
     [SerializeField] private TextMeshProUGUI goldText;         // 현재 보유중인 골드 텍스트
+    [SerializeField] private TextMeshProUGUI expText;          // 슬라이더 위에 표시되는 경험치 텍스트 (중앙)
+    [SerializeField] private TextMeshProUGUI levelValueText;   // 하단의 경험치 수치 텍스트 (슬라이더 옆)
+    [SerializeField] private TextMeshProUGUI descriptionText;  // 레벨 텍스트 (Lv.표시)
+
+    [Header("슬라이더")]
     [SerializeField] private Slider levelBar;                  // 경험치 표시용 슬라이더
+
+    [Header("버튼")]
     [SerializeField] private Button statusButton;              // 상태창 열기 버튼
     [SerializeField] private Button inventoryButton;           // 인벤토리 열기 버튼
 

@@ -71,14 +71,20 @@ public class EquipUIManager : MonoBehaviour
         equipButton.onClick.AddListener(() =>
         {
             GameManager.Instance.Player.Equip(item); // 아이템 장착
-            CloseUI();                               // UI 닫기 + 마크 갱신
+            UIManager.Instance.UIInventory.InitInventoryUI(); // 슬롯 상태 동기화
+            UIManager.Instance.UIMainMenu.SetCharacter(GameManager.Instance.Player); // 메인메뉴 갱신
+            UIManager.Instance.UIStatus.RefreshStatusUI(); // 상태창 갱신
+            CloseUI();
         });
 
         // 해제 버튼 리스너 등록
         unequipButton.onClick.AddListener(() =>
         {
             GameManager.Instance.Player.UnEquip(item); // 아이템 해제
-            CloseUI();                                 // UI 닫기 + 마크 갱신
+            UIManager.Instance.UIInventory.InitInventoryUI(); // 슬롯 상태 동기화
+            UIManager.Instance.UIMainMenu.SetCharacter(GameManager.Instance.Player); // 메인메뉴 갱신
+            UIManager.Instance.UIStatus.RefreshStatusUI(); // 상태창 갱신
+            CloseUI();
         });
     }
 
