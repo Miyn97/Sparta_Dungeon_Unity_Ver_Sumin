@@ -44,7 +44,6 @@ public class GameManager : MonoBehaviour
         Item magicbook = new Item("마법책", magicbookIcon, 5, 0, 0, 15);           //공격력 5, 치명타 15
         Item helmet = new Item("투구", helmetIcon, 0, 10, 5, 0);                  //방어력 10, 체력 5
         Item ring = new Item("반지", ringIcon, 0, 0, 20, 5);                      //체력 20, 치명타 5
-        Item none = new Item("없음", noneIcon);                                   //빈 슬롯용
 
         // 플레이어 인벤토리에 아이템 추가
         player.AddItem(sword);
@@ -54,7 +53,6 @@ public class GameManager : MonoBehaviour
         player.AddItem(magicbook);
         player.AddItem(helmet);
         player.AddItem(ring);
-        player.AddItem(none);
 
         // 검 아이템 장착
         player.Equip(sword);

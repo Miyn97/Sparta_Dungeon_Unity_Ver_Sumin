@@ -31,7 +31,7 @@ public class UIInventory : MonoBehaviour
                 ui.Hide();
 
             // 메인 메뉴로 전환
-            UIManager.Instance.ChangeState(UIState.MainMenu);
+            UIManager.Instance.ShowMainMenuOnly();
         });
 
         // 인벤토리 초기화

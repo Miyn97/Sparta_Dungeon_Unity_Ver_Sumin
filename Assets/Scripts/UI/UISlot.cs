@@ -40,23 +40,25 @@ public class UISlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         hoverNameText = hoverText;                                  // (현재 사용되지 않음)
     }
 
-    // 슬롯에 마우스 올렸을 때 실행 (현재 사용 안 함)
+    // 슬롯에 마우스 올렸을 때 실행
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (hoverNameText == null) return;
+        if (hoverNameText != null)
+            hoverNameText.text = itemData != null ? itemData.Name : "없음";
 
-        if (eventData.pointerEnter == null || !eventData.pointerEnter.transform.IsChildOf(transform))
-            return;
-
-        hoverNameText.text = itemData != null ? itemData.Name : "없음";
+        if (itemData != null)
+            ItemTooltipUI.Instance.Show(itemData); // 툴팁 표시
     }
 
-    // 슬롯에서 마우스 벗어날 때 텍스트 초기화
+    // 슬롯에서 마우스 벗어날 때
     public void OnPointerExit(PointerEventData eventData)
     {
         if (hoverNameText != null)
             hoverNameText.text = "";
+
+        ItemTooltipUI.Instance.Hide(); // 툴팁 숨기기
     }
+
 
     // 슬롯 클릭 시 장착 UI 호출
     public void OnPointerClick(PointerEventData eventData)
