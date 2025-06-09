@@ -45,11 +45,13 @@ public class UISlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         if (hoverNameText == null) return;
 
-        if (itemData != null)
-            hoverNameText.text = itemData.Name;                     // 아이템 이름 출력
-        else
-            hoverNameText.text = "없음";                            // 아이템이 없으면 "없음" 출력
+        // 마우스가 이 슬롯 내부 또는 자식 위에 있을 때만 작동
+        if (eventData.pointerEnter == null || !eventData.pointerEnter.transform.IsChildOf(transform))
+            return;
+
+        hoverNameText.text = itemData != null ? itemData.Name : "없음";
     }
+
 
     // 마우스가 슬롯을 벗어났을 때 텍스트 초기화
     public void OnPointerExit(PointerEventData eventData)
