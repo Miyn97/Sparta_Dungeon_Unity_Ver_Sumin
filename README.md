@@ -38,7 +38,6 @@ Assets/
      └─ Images/Inventory/…     // 아이템 아이콘 PNG
 ```
 
-*Script 위치를 수정하였다면* `using` 및 네임스페이스 관리에 유의하십시오.
 
 ---
 
@@ -67,7 +66,6 @@ Assets/
 * **UI** : 실제로 켜고 끄는 Canvas 들
 * **MANAGER** : DontDestroyOnLoad 미사용, 씬마다 한 번만 존재
 
-> **Tip** : 하이라키 그룹 네이밍(`=====[UI]=====`)은 단순 시각 구분용입니다. 프리팹화할 때 이름은 자유롭게 바꿔도 됩니다.
 
 ---
 
