@@ -4,8 +4,6 @@
 ![image](https://github.com/user-attachments/assets/fa699b93-2c61-4e4f-ace7-ea96ad1f1048)
 
 
-![Hierarchy & Project 구조](./Docs/InventoryHierarchy.png)
-
 ---
 
 ## 📂 폴더 구조
